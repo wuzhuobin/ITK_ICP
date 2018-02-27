@@ -56,6 +56,10 @@ int main(int argc, char** argv)
 	vector<string> fileNames{
 		"Reference with develop tool.vtk",
 		"Dental(shift mid point to origin).vtk" };
+	//vector<string> fileNames{
+	//	"phantom.vtk",
+	//	"skin.vtk"
+	//};
 
 	vector<vtkSmartPointer<vtkPolyDataReader>> readers;
 	for (int i = 0; i < 2; ++i) {
@@ -71,10 +75,27 @@ int main(int argc, char** argv)
 	//itk_icp->GetLandmarkTransform()->SetModeToRigidBody();
 	//itk_icp->SetMaximumNumberOfIterations(20);
 	//itk_icp->StartByMatchingCentroidsOn();
-	itk_icp->SetNumberOfIterations(100);
+	itk_icp->SetNumberOfIterations(150);
+	//itk_icp->InitializationWithPCAOff();
 	itk_icp->Update();
 	cout << "itk cal RMS: " << itk_icp->GetRMS() << '\n';
 	
+	cerr << "Finish!\n";
+	cin.get();
+
+	return 0;
+}
+
+int prevous_main(int argc, char** argv)
+{
+	argv[0] = "../";
+	argv[1] = "asdfasdf";
+	argv[2] = "asdfasdf";
+	string folder("../");
+	vector<string> fileNames{
+		"Reference with develop tool.vtk",
+		"Dental(shift mid point to origin).vtk" };
+
 	vector<MeshFileReader::Pointer> meshReaders;
 	for (int i = 0; i < 2; ++i) {
 		meshReaders.push_back(MeshFileReader::New());
@@ -311,9 +332,6 @@ int main(int argc, char** argv)
 	pointSetToPointSetRegistration->Update();
 	cout << "itk_ICP final rms" << levenbergMarquardtOptimizer->GetValue().mean() << '\n';
 	//pointSetToPointSetRegistration->
-
-	cerr << "Finish!\n";
-	cin.get();
 
 	return 0;
 }

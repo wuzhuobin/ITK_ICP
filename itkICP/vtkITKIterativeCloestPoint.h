@@ -20,6 +20,15 @@ public:
 	vtkSetMacro(NumberOfIterations, unsigned int);
 	vtkGetMacro(NumberOfIterations, unsigned int);
 
+	vtkSetMacro(Mode, int);
+	vtkGetMacro(Mode, int);
+	void SetModeToRigid() { this->SetMode(RIGID); }
+	void SetModeToAffine() { this->SetMode(AFFINE); }
+
+	vtkBooleanMacro(InitializationWithPCA, bool);
+	vtkSetMacro(InitializationWithPCA, bool);
+	vtkGetMacro(InitializationWithPCA, bool);
+
 	vtkGetMacro(RMS, double);
 
 	enum TRANSFORM_MODE
@@ -35,6 +44,7 @@ protected:
 	vtkITKIterativeCloestPoint();
 	virtual ~vtkITKIterativeCloestPoint() override;
 
+	bool InitializationWithPCA;
 	unsigned int NumberOfIterations;
 	unsigned int Mode;
 	double RMS;
@@ -48,10 +58,6 @@ protected:
 
 	void ITK_Calculation();
 	
-	////template <typename Transform>
-	//void ITK_ICP_implementation(
-	//	vnl_matrix_fixed< CoordinateType, DIMENSION + 1, DIMENSION + 1> initial_matrix );
-
 private:
 	vtkITKIterativeCloestPoint(const vtkITKIterativeCloestPoint&) = delete;
 	void operator=(const vtkITKIterativeCloestPoint&) = delete;
