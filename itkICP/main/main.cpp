@@ -13,9 +13,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataReader.h>
+#include <vtkLandmarkTransform.h>
 
 #include "vtkITKIterativeCloestPoint.h"
-#include "vtkLandmarkTransform.h"
+#include "vtkPCA_ICP_Transform.h"
 
 #include <vnl_vector.h>
 #include <vnl_matrix.h>
@@ -68,18 +69,25 @@ int main(int argc, char** argv)
 		readers[i]->Update();
 
 	}
+	vtkSmartPointer<vtkPCA_ICP_Transform> pca_icp =
+		vtkSmartPointer<vtkPCA_ICP_Transform>::New();
+	pca_icp->SetSource(readers[0]->GetOutput());
+	pca_icp->SetTarget(readers[1]->GetOutput());
+	pca_icp->SetMaximumNumberOfIterations(150);
+	pca_icp->GetLandmarkTransform()->SetModeToRigidBody();
+	pca_icp->Update();
+	cerr << "pca cal RMS: " << pca_icp->GetRMS() << '\n';
+	cerr << "Finish!\n";
+	cin.get();
+
 	vtkSmartPointer<vtkITKIterativeCloestPoint> itk_icp =
 		vtkSmartPointer<vtkITKIterativeCloestPoint>::New();
 	itk_icp->SetSource(readers[0]->GetOutput()->GetPoints());
 	itk_icp->SetTarget(readers[1]->GetOutput()->GetPoints());
-	//itk_icp->GetLandmarkTransform()->SetModeToRigidBody();
-	//itk_icp->SetMaximumNumberOfIterations(20);
-	//itk_icp->StartByMatchingCentroidsOn();
+	itk_icp->SetModeToRigid();
 	itk_icp->SetNumberOfIterations(150);
-	//itk_icp->InitializationWithPCAOff();
 	itk_icp->Update();
-	cout << "itk cal RMS: " << itk_icp->GetRMS() << '\n';
-	
+	cerr << "itk cal RMS: " << itk_icp->GetRMS() << '\n';
 	cerr << "Finish!\n";
 	cin.get();
 
